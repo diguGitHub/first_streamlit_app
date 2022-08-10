@@ -19,7 +19,7 @@ streamlit.dataframe(fruits_to_show)
 
 #new section to display fruityvice response
 import requests
-fruity_vice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+fruity_vice_response = requests.get("https://fruityvice.com/api/fruit/"+"kiwi")
 
 #normalize the response
 fruity_vice_normalized = pandas.json_normalize(fruity_vice_response.json())
