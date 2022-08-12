@@ -15,11 +15,15 @@ my_fruit_list = pandas.read_csv("https://uni-lab-files.s3.us-west-2.amazonaws.co
 my_fruit_list = my_fruit_list.set_index('Fruit')
 # Let's put a pick list here so they can pick the fruit they want to include 
 fruits_selected = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.index),['Avocado','Strawberries'])
-
 fruits_to_show = my_fruit_list.loc[fruits_selected]
-
 # Display the table on the page.
 streamlit.dataframe(fruits_to_show)
+#define function 
+def get_fruitvice_data(fruit_choice):
+  fruity_vice_response = requests.get("https://fruityvice.com/api/fruit/"+fruit_choice)
+  fruity_vice_normalized = pandas.json_normalize(fruity_vice_response.json())
+  return fruity_vice_normalized
+
 
 #new section to display fruityvice response
 streamlit.header("Fruityvice Fruit Advice!")
@@ -28,11 +32,11 @@ try:
   if not fruit_choice:
     streamlit.error("Please select a fruit to get information.")
   else:
-    fruity_vice_response = requests.get("https://fruityvice.com/api/fruit/"+fruit_choice)
-    fruity_vice_normalized = pandas.json_normalize(fruity_vice_response.json())
-    streamlit.dataframe(fruity_vice_normalized)
+    details_from_function = get_fruitvice_data(fruit_choice)
+    streamlit.dataframe(details_from_function)
 except URLError as e:
   streamlit.error()
+
 streamlit.stop()
 
 my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
